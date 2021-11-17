@@ -1,0 +1,32 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+pr:
+- master
+
+name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)$(Rev:.r)
+
+stages:
+- stage: Test
+
+  variables:
+  - name: inventory
+    value: veos_vtb
+  - name: testbed_file
+    value: vtestbed.csv
+
+  jobs:
+  - job:
+    pool: sonic-tests
+    displayName: "my1st pipeline testing"
+    timeoutInMinutes: 300
+
+    steps:
+    - task: Bash@3
+      displayName: Pull versions
+      inputs:
+        targetType: 'inline'
+        script: |
+          ssh admin@vlab-1 "show version"
